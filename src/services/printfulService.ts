@@ -25,6 +25,12 @@ class PrintfulService {
       ? `${this.baseUrl}${endpoint}`
       : `${this.baseUrl}${endpoint}`
     
+    console.log('🔍 Frontend Service Debug:');
+    console.log('- Environment:', import.meta.env.DEV ? 'DEV' : 'PROD');
+    console.log('- Base URL:', this.baseUrl);
+    console.log('- Endpoint:', endpoint);
+    console.log('- Full URL:', url);
+    
     const headers = import.meta.env.DEV
       ? {
           'Authorization': `Bearer ${import.meta.env.VITE_PRINTFUL_TOKEN}`,
@@ -36,22 +42,32 @@ class PrintfulService {
           ...options.headers,
         }
 
+    console.log('- Headers:', headers);
+
     const response = await fetch(url, {
       headers,
       ...options,
     })
 
+    console.log('📡 Response Status:', response.status);
+    console.log('📡 Response StatusText:', response.statusText);
+
     if (!response.ok) {
+      const errorText = await response.text();
+      console.log('❌ Error Response Body:', errorText);
       throw new Error(`Printful API error: ${response.statusText}`)
     }
 
     const data = await response.json()
+    console.log('📦 Response Data:', data);
     
     // Handle Printful's response structure
     if (data.result) {
+      console.log('✅ Returning data.result');
       return data.result
     }
     
+    console.log('✅ Returning data directly');
     return data
   }
 
