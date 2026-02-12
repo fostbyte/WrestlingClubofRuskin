@@ -17,6 +17,7 @@ interface PrintfulProduct {
 
 class PrintfulService {
   private baseUrl = import.meta.env.DEV ? 'https://api.printful.com' : '/.netlify/functions/printful-proxy'
+  private storeId = 17704955 // Wrestling Club of Ruskin store ID
 
   constructor() {}
 
@@ -83,8 +84,8 @@ class PrintfulService {
 
   async getShopProducts(): Promise<PrintfulProduct[]> {
     try {
-      // Use the sync/products endpoint which shows your store's products
-      const data = await this.makeRequest('/sync/products');
+      // Use the sync/products endpoint with store ID
+      const data = await this.makeRequest(`/sync/products?store_id=${this.storeId}`);
       
       if (!Array.isArray(data)) {
         console.log('Printful API response:', data);
@@ -135,7 +136,7 @@ class PrintfulService {
 
   async getSingleProduct(productId: string): Promise<PrintfulProduct | null> {
     try {
-      const data = await this.makeRequest(`/sync/products/${productId}`)
+      const data = await this.makeRequest(`/sync/products/${productId}?store_id=${this.storeId}`)
       
       // Printful returns sync_product and sync_variants
       const syncProduct = data.sync_product || {};

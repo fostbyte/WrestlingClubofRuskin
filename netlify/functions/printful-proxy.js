@@ -18,11 +18,12 @@ exports.handler = async function(event, context) {
     };
   }
 
-  const { path, httpMethod } = event;
+  const { path, httpMethod, queryStringParameters } = event;
   
   console.log('=== PRINTFUL PROXY DEBUG ===');
   console.log('Path:', path);
   console.log('HTTP Method:', httpMethod);
+  console.log('Query Parameters:', queryStringParameters);
   console.log('PRINTFUL_TOKEN exists:', !!process.env.PRINTFUL_TOKEN);
   
   // Allow specific endpoints for sync products
@@ -36,7 +37,14 @@ exports.handler = async function(event, context) {
   }
 
   try {
-    const url = `https://api.printful.com${path}`;
+    let url = `https://api.printful.com${path}`;
+    
+    // Add query parameters if they exist
+    if (queryStringParameters) {
+      const params = new URLSearchParams(queryStringParameters);
+      url += `?${params.toString()}`;
+    }
+    
     console.log('🔗 Making request to:', url);
     
     const response = await fetch(url, {
