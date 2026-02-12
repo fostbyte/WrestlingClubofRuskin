@@ -4,19 +4,18 @@ import 'slick-carousel/slick/slick-theme.css'
 import Slider from 'react-slick'
 import { ShoppingCartIcon, StarIcon, TrophyIcon } from '@heroicons/react/24/outline'
 import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid'
-import { printifyService } from '../services/printifyService'
+import { printfulService } from '../services/printfulService'
 
-interface PrintifyProduct {
+interface PrintfulProduct {
   id: string
-  title: string
+  name: string
   price: number
-  images: Array<{ src: string; alt: string }>
+  images: Array<{ url: string; thumbnail_url?: string }>
   description: string
-  shop_url: string
 }
 
-const PrintifyShop: React.FC = () => {
-  const [products, setProducts] = useState<PrintifyProduct[]>([])
+const PrintfulShop: React.FC = () => {
+  const [products, setProducts] = useState<PrintfulProduct[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -24,11 +23,11 @@ const PrintifyShop: React.FC = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true)
-        const fetchedProducts = await printifyService.getShopProducts()
+        const fetchedProducts = await printfulService.getShopProducts()
         setProducts(fetchedProducts)
         
         if (fetchedProducts.length === 0) {
-          setError('No products found in your store. Please check your Printify shop configuration.')
+          setError('No products found. If you recently published products in Printful, there might be a sync delay. Try refreshing in a few minutes.')
         }
       } catch (err) {
         console.error('Error fetching products:', err)
@@ -84,9 +83,9 @@ const PrintifyShop: React.FC = () => {
     return stars
   }
 
-  const handleAddToCart = (product: PrintifyProduct) => {
-    // Open Printify product page in new tab
-    window.open(product.shop_url, '_blank')
+  const handleAddToCart = (product: PrintfulProduct) => {
+    // Open Printful product page in new tab
+    window.open(`https://www.printful.com/products/${product.id}`, '_blank')
   }
 
   if (loading) {
@@ -145,7 +144,7 @@ const PrintifyShop: React.FC = () => {
           </div>
           <p className="text-xl text-gray-200 max-w-3xl mx-auto font-medium leading-relaxed">
             Support the club by purchasing our official <span className="text-wcr-gold font-bold">championship apparel</span>. 
-            All items are processed through Printify with secure payment handling worldwide.
+            All items are processed through Printful with secure payment handling worldwide.
           </p>
         </div>
 
@@ -156,13 +155,13 @@ const PrintifyShop: React.FC = () => {
                 <div className="bg-wcr-black/80 backdrop-blur-sm border border-wcr-gold/30 rounded-xl overflow-hidden hover:border-wcr-gold transition-all duration-300 hover:transform hover:scale-105 hover:shadow-2xl hover:shadow-wcr-gold/20">
                   <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-wcr-purple/10">
                     <img
-                      src={product.images[0]?.src || 'https://via.placeholder.com/400x500/4A1D96/FFFFFF?text=WCR+Product'}
-                      alt={product.images[0]?.alt || product.title}
+                      src={product.images[0]?.url || 'https://via.placeholder.com/400x500/4A1D96/FFFFFF?text=WCR+Product'}
+                      alt={product.name}
                       className="w-full h-80 object-cover object-center hover:scale-110 transition-transform duration-500"
                     />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-black text-white mb-2">{product.title}</h3>
+                    <h3 className="text-xl font-black text-white mb-2">{product.name}</h3>
                     <p className="text-sm text-gray-300 mb-4">{product.description}</p>
                     
                     <div className="flex items-center mb-4">
@@ -202,10 +201,10 @@ const PrintifyShop: React.FC = () => {
             <div className="h-px bg-wcr-gold w-20"></div>
           </div>
           <p className="text-sm text-gray-400 mb-6 font-medium">
-            Powered by Printify - Secure payment processing worldwide
+            Powered by Printful - Secure payment processing worldwide
           </p>
           <button
-            onClick={() => window.open('https://your-printify-store.com', '_blank')}
+            onClick={() => window.open('https://your-printful-store.com', '_blank')}
             className="btn btn-outline border-2 border-wcr-gold text-wcr-gold hover:bg-wcr-gold hover:text-wcr-black px-8 py-3 font-bold rounded-full transition-all duration-300 transform hover:scale-105"
           >
             VIEW FULL STORE →
@@ -216,4 +215,4 @@ const PrintifyShop: React.FC = () => {
   )
 }
 
-export default PrintifyShop
+export default PrintfulShop

@@ -59,7 +59,12 @@ class PrintifyService {
     try {
       const shopId = import.meta.env.VITE_PRINTIFY_SHOP_ID || ''
       const data = await this.makeRequest(`/shops/${shopId}/products.json`)
-      return data.map((product: any) => ({
+      
+      // Filter for visible products (not just published ones)
+      // This helps when web interface shows published but API shows draft
+      const visibleProducts = data.filter((product: any) => product.visible === true)
+      
+      return visibleProducts.map((product: any) => ({
         id: product.id,
         title: product.title,
         description: product.description?.substring(0, 200) + '...' || 'No description available',
