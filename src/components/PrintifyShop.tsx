@@ -25,42 +25,14 @@ const PrintifyShop: React.FC = () => {
       try {
         setLoading(true)
         const fetchedProducts = await printifyService.getShopProducts()
+        setProducts(fetchedProducts)
         
         if (fetchedProducts.length === 0) {
-          // Fallback to mock data if no products found
-          const mockProducts: PrintifyProduct[] = [
-            {
-              id: '1',
-              title: 'WCR Championship Tee',
-              price: 24.99,
-              images: [{ src: 'https://via.placeholder.com/400x500/4A1D96/FFFFFF?text=WCR+Champ+Tee', alt: 'WCR Championship Tee' }],
-              description: 'Premium cotton t-shirt with championship design',
-              shop_url: 'https://your-printify-store.com/product/1'
-            },
-            {
-              id: '2',
-              title: 'WCR Elite Hoodie',
-              price: 44.99,
-              images: [{ src: 'https://via.placeholder.com/400x500/6B46C1/FFFFFF?text=WCR+Elite+Hoodie', alt: 'WCR Elite Hoodie' }],
-              description: 'Comfortable hoodie with elite wrestler branding',
-              shop_url: 'https://your-printify-store.com/product/2'
-            },
-            {
-              id: '3',
-              title: 'WCR Gold Medal Singlet',
-              price: 34.99,
-              images: [{ src: 'https://via.placeholder.com/400x500/FFD700/000000?text=WCR+Singlet', alt: 'WCR Gold Medal Singlet' }],
-              description: 'Competition-grade wrestling singlet',
-              shop_url: 'https://your-printify-store.com/product/3'
-            }
-          ]
-          setProducts(mockProducts)
-        } else {
-          setProducts(fetchedProducts)
+          setError('No products found in your store. Please check your Printify shop configuration.')
         }
       } catch (err) {
         console.error('Error fetching products:', err)
-        setError('Failed to load products. Please try again later.')
+        setError('Failed to load products. Please check your API configuration and try again.')
       } finally {
         setLoading(false)
       }
