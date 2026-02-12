@@ -1,11 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: light;
+  color: #213547;
+  background-color: #ffffff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -35,15 +39,19 @@
   }
   
   .btn {
-    @apply inline-block px-6 py-3 rounded-full font-medium transition-colors duration-200;
+    @apply inline-block px-6 py-3 rounded-full font-medium transition-all duration-200 transform hover:scale-105;
   }
   
   .btn-primary {
-    @apply bg-white text-primary hover:bg-gray-100;
+    @apply bg-wcr-purple text-white hover:bg-wcr-purple-dark shadow-lg hover:shadow-xl;
+  }
+  
+  .btn-secondary {
+    @apply bg-wcr-gold text-wcr-black hover:bg-yellow-400 shadow-lg hover:shadow-xl;
   }
   
   .btn-outline {
-    @apply border-2 border-white text-white hover:bg-white hover:text-primary;
+    @apply border-2 border-wcr-purple text-wcr-purple hover:bg-wcr-purple hover:text-white;
   }
 }
 
