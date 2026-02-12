@@ -1,20 +1,36 @@
 const fetch = require('node-fetch');
 
 exports.handler = async function(event, context) {
+  // Add CORS headers
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Content-Type': 'application/json'
+  };
+
+  // Handle preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers,
+      body: ''
+    };
+  }
+
   const { path, httpMethod } = event;
   
-  // Detailed logging for debugging
   console.log('=== PRINTFUL PROXY DEBUG ===');
   console.log('Path:', path);
   console.log('HTTP Method:', httpMethod);
   console.log('PRINTFUL_TOKEN exists:', !!process.env.PRINTFUL_TOKEN);
-  console.log('PRINTFUL_TOKEN length:', process.env.PRINTFUL_TOKEN?.length || 0);
   
   // Allow specific endpoints for sync products
-  if (!path.includes('/sync/products')) {
+  if (!path || !path.includes('/sync/products')) {
     console.log('❌ Forbidden endpoint - path does not include /sync/products');
     return {
       statusCode: 403,
+      headers,
       body: JSON.stringify({ error: 'Forbidden endpoint', path })
     };
   }
@@ -32,14 +48,13 @@ exports.handler = async function(event, context) {
     });
 
     console.log('📡 Printful API Response Status:', response.status);
-    console.log('📡 Printful API Response StatusText:', response.statusText);
     
     const data = await response.json();
-    console.log('📦 Printful API Response Keys:', Object.keys(data));
     console.log('📦 Printful API Result Length:', data.result?.length || 0);
     
     const result = {
       statusCode: response.status,
+      headers,
       body: JSON.stringify(data)
     };
     
@@ -52,6 +67,7 @@ exports.handler = async function(event, context) {
     console.log('=== END DEBUG ===');
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({ error: 'Internal server error', details: error.message })
     };
   }

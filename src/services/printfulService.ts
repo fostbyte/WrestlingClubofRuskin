@@ -21,27 +21,37 @@ class PrintfulService {
   constructor() {}
 
   private async makeRequest(endpoint: string, options: RequestInit = {}) {
-    const url = import.meta.env.DEV 
-      ? `${this.baseUrl}${endpoint}`
-      : `${this.baseUrl}${endpoint}`
+    let url: string
+    let headers: HeadersInit
+    
+    if (import.meta.env.DEV) {
+      url = `${this.baseUrl}${endpoint}`
+      headers = {
+        'Authorization': `Bearer ${import.meta.env.VITE_PRINTFUL_TOKEN}`,
+        'Content-Type': 'application/json',
+        ...options.headers,
+      }
+    } else {
+      // Try different URL patterns for production
+      const patterns = [
+        `${this.baseUrl}${endpoint}`,
+        `/.netlify/functions/printful-proxy${endpoint}`,
+        `/api/printful-proxy${endpoint}`
+      ]
+      
+      // Try the first pattern, but we could cycle through them if needed
+      url = patterns[0]
+      headers = {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      }
+    }
     
     console.log('🔍 Frontend Service Debug:');
     console.log('- Environment:', import.meta.env.DEV ? 'DEV' : 'PROD');
     console.log('- Base URL:', this.baseUrl);
     console.log('- Endpoint:', endpoint);
     console.log('- Full URL:', url);
-    
-    const headers = import.meta.env.DEV
-      ? {
-          'Authorization': `Bearer ${import.meta.env.VITE_PRINTFUL_TOKEN}`,
-          'Content-Type': 'application/json',
-          ...options.headers,
-        }
-      : {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        }
-
     console.log('- Headers:', headers);
 
     const response = await fetch(url, {
