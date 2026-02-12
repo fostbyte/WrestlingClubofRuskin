@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 async function checkStoreProducts() {
-  const token = process.env.VITE_PRINTFUL_TOKEN;
+  const token = process.env.PRINTFUL_TOKEN;
   
   console.log('🔍 Checking your Printful store setup...\n');
   

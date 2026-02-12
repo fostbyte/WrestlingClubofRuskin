@@ -16,7 +16,7 @@ This project has been migrated from Printify to Printful for merchandise sales. 
 #### Development
 Create a `.env` file in your project root:
 ```env
-VITE_PRINTFUL_TOKEN=your_printful_token_here
+PRINTFUL_TOKEN=your_printful_token_here
 ```
 
 #### Production (Netlify)

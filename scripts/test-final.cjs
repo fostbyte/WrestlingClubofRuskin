@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 async function testFinalIntegration() {
-  const token = process.env.VITE_PRINTFUL_TOKEN;
+  const token = process.env.PRINTFUL_TOKEN;
   
   console.log('🎯 Testing final Printful integration...\n');
   

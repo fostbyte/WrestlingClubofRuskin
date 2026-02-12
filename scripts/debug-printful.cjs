@@ -7,7 +7,7 @@ dotenv.config();
 async function debugPrintful() {
   console.log('🔍 Debugging Printful API...\n');
   
-  const token = process.env.VITE_PRINTFUL_TOKEN || process.env.PRINTFUL_TOKEN;
+  const token = process.env.PRINTFUL_TOKEN;
   
   if (!token || token === 'YOUR_ACTUAL_PRINTFUL_TOKEN_HERE') {
     console.error('❌ Please set your actual Printful token in .env file');

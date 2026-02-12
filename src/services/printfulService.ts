@@ -27,7 +27,7 @@ class PrintfulService {
     if (import.meta.env.DEV) {
       url = `${this.baseUrl}${endpoint}`
       headers = {
-        'Authorization': `Bearer ${import.meta.env.VITE_PRINTFUL_TOKEN}`,
+        'Authorization': `Bearer ${import.meta.env.PRINTFUL_TOKEN}`,
         'Content-Type': 'application/json',
         ...options.headers,
       }

@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 async function testProducts() {
-  const token = process.env.VITE_PRINTFUL_TOKEN;
+  const token = process.env.PRINTFUL_TOKEN;
   const storeId = 17704955; // Your store ID
   
   console.log(`🛍️ Testing products for store ${storeId}...\n`);

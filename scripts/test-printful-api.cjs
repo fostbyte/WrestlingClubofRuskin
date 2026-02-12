@@ -9,11 +9,11 @@ async function testPrintfulAPI() {
   console.log('🧪 Testing Printful API connection...\n');
   
   // Check if token is set
-  const token = process.env.VITE_PRINTFUL_TOKEN || process.env.PRINTFUL_TOKEN;
+  const token = process.env.PRINTFUL_TOKEN;
   
   if (!token || token === 'your_printful_token_here') {
     console.error('❌ Printful API token not found or not set!');
-    console.log('Please set VITE_PRINTFUL_TOKEN in your .env file with your actual Printful API token.');
+    console.log('Please set PRINTFUL_TOKEN in your .env file with your actual Printful API token.');
     return;
   }
   
