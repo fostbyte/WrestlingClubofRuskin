@@ -52,10 +52,35 @@ netlify deploy --prod --dir=dist
 
 ### **Common Issues:**
 
-#### **Products not loading:**
-- Check `VITE_PRINTIFY_TOKEN` is correct
-- Verify `VITE_PRINTIFY_SHOP_ID` is set
-- Check browser console for API errors
+#### **Netlify Setup Instructions**
+
+## Environment Variables
+
+### In Netlify Dashboard (Site Settings → Build & deploy → Environment)
+
+**Required Environment Variables:**
+- `PRINTIFY_TOKEN`: Your Printify API token (server-side only)
+- `VITE_PRINTIFY_SHOP_ID`: Your Printify shop ID (client-side)
+
+**Important Security Notes:**
+- `PRINTIFY_TOKEN` is now server-side only and will NOT be exposed to the browser
+- `VITE_PRINTIFY_SHOP_ID` is safe for client-side use as it's not sensitive
+- Never add `VITE_PRINTIFY_TOKEN` as it would expose your API token to users
+
+## Architecture Changes
+
+The application now uses a serverless function proxy to secure your Printify API token:
+
+1. **Client-side**: React app calls `/.netlify/functions/printify-proxy/*`
+2. **Serverless function**: Proxies requests to Printify API with server-side token
+3. **Security**: API token is never exposed in browser bundle
+
+## Deployment
+
+1. Push your changes to Git
+2. Netlify will automatically build and deploy
+3. Add environment variables in Netlify Dashboard
+4. The build should now pass secrets scanning
 
 #### **Build errors:**
 - Ensure environment variables are set in Netlify (not just locally)
@@ -69,7 +94,6 @@ netlify deploy --prod --dir=dist
 
 Create a `.env.local` file for local testing:
 ```env
-VITE_PRINTIFY_TOKEN=your_token_here
 VITE_PRINTIFY_SHOP_ID=your_shop_id_here
 ```
 

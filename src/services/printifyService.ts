@@ -16,19 +16,13 @@ interface PrintifyProduct {
 }
 
 class PrintifyService {
-  private baseUrl = 'https://api.printify.com/v1'
-  private token: string
-  private shopId: string
+  private baseUrl = '/.netlify/functions/printify-proxy'
 
-  constructor() {
-    this.token = import.meta.env.VITE_PRINTIFY_TOKEN || ''
-    this.shopId = import.meta.env.VITE_PRINTIFY_SHOP_ID || ''
-  }
+  constructor() {}
 
   private async makeRequest(endpoint: string, options: RequestInit = {}) {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       headers: {
-        'Authorization': `Bearer ${this.token}`,
         'Content-Type': 'application/json',
         ...options.headers,
       },
@@ -44,7 +38,8 @@ class PrintifyService {
 
   async getShopProducts(): Promise<PrintifyProduct[]> {
     try {
-      const data = await this.makeRequest(`/shops/${this.shopId}/products.json`)
+      const shopId = import.meta.env.VITE_PRINTIFY_SHOP_ID || ''
+      const data = await this.makeRequest(`/shops/${shopId}/products.json`)
       return data.map((product: any) => ({
         id: product.id,
         title: product.title,
@@ -65,7 +60,8 @@ class PrintifyService {
 
   async getSingleProduct(productId: string): Promise<PrintifyProduct | null> {
     try {
-      const data = await this.makeRequest(`/shops/${this.shopId}/products/${productId}.json`)
+      const shopId = import.meta.env.VITE_PRINTIFY_SHOP_ID || ''
+      const data = await this.makeRequest(`/shops/${shopId}/products/${productId}.json`)
       return {
         id: data.id,
         title: data.title,
