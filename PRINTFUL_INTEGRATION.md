@@ -43,15 +43,15 @@ Add the following environment variable in Netlify Dashboard:
 
 ### Get Store Products
 ```
-GET /store/products
+GET /sync/products
 ```
-Returns all products from your Printful store.
+Returns all products from your Printful store. This is the correct endpoint for sync products.
 
 ### Get Single Product
 ```
-GET /store/products/{id}
+GET /sync/products/{id}
 ```
-Returns details for a specific product.
+Returns details for a specific product, including variants and pricing.
 
 ## Product Data Structure
 
@@ -74,6 +74,10 @@ interface PrintfulProduct {
 }
 ```
 
+**Important**: The `/sync/products` endpoint returns a different structure than `/store/products`. The sync endpoint returns:
+- `id`, `name`, `variants`, `synced`, `thumbnail_url`, `is_ignored`
+- Detailed product info (including pricing) requires fetching individual products via `/sync/products/{id}`
+
 ## Deployment Notes
 
 1. Ensure `PRINTFUL_TOKEN` is set in Netlify environment variables
@@ -88,15 +92,22 @@ interface PrintfulProduct {
    - Check your Printful store has published products
    - Verify API token is correct and has proper permissions
    - Check Netlify environment variables are set
+   - Ensure you're using `/sync/products` endpoint, not `/store/products`
 
 2. **API errors**
    - Verify Printful API token is valid
    - Check if your store is properly configured in Printful
    - Ensure products are published and available
+   - Make sure proxy function allows `/sync/products` endpoints
 
 3. **Build errors**
    - Make sure all environment variables are properly set
    - Check that the Netlify function is properly deployed
+
+4. **Products showing but no prices**
+   - The `/sync/products` list endpoint doesn't include pricing
+   - Service fetches individual product details to get pricing
+   - Check if individual product API calls are working
 
 ## Migration from Printify
 

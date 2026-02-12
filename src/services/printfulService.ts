@@ -65,21 +65,42 @@ class PrintfulService {
         return [];
       }
       
-      return data.map((product: any) => ({
-        id: product.id.toString(),
-        name: product.name,
-        description: product.description?.substring(0, 200) + '...' || 'No description available',
-        price: product.retail_price || 0,
-        images: product.image_url ? [{
-          url: product.image_url,
-          thumbnail_url: product.thumbnail_url
-        }] : product.files?.filter((file: any) => file.type === 'preview').map((file: any) => ({
-          url: file.preview_url,
-          thumbnail_url: file.thumbnail_url
-        })) || [],
-        variants: product.variants || [],
-        retail_price: product.retail_price || 0
-      }));
+      // Fetch detailed information for each product to get prices
+      const productsWithDetails = await Promise.all(
+        data.map(async (product: any) => {
+          try {
+            const productDetails = await this.getSingleProduct(product.id.toString());
+            return productDetails || {
+              id: product.id.toString(),
+              name: product.name,
+              description: `Product with ${product.variants || 0} variants`,
+              price: 0,
+              images: product.thumbnail_url ? [{
+                url: product.thumbnail_url,
+                thumbnail_url: product.thumbnail_url
+              }] : [],
+              variants: [],
+              retail_price: 0
+            };
+          } catch (error) {
+            console.error(`Error fetching details for product ${product.id}:`, error);
+            return {
+              id: product.id.toString(),
+              name: product.name,
+              description: `Product with ${product.variants || 0} variants`,
+              price: 0,
+              images: product.thumbnail_url ? [{
+                url: product.thumbnail_url,
+                thumbnail_url: product.thumbnail_url
+              }] : [],
+              variants: [],
+              retail_price: 0
+            };
+          }
+        })
+      );
+      
+      return productsWithDetails;
     } catch (error) {
       console.error('Error fetching Printful products:', error);
       return [];
@@ -88,18 +109,30 @@ class PrintfulService {
 
   async getSingleProduct(productId: string): Promise<PrintfulProduct | null> {
     try {
-      const data = await this.makeRequest(`/store/products/${productId}`)
+      const data = await this.makeRequest(`/sync/products/${productId}`)
+      
+      // Printful returns sync_product and sync_variants
+      const syncProduct = data.sync_product || {};
+      const syncVariants = data.sync_variants || [];
+      
+      // Get price from the first variant
+      const price = syncVariants.length > 0 ? parseFloat(syncVariants[0].retail_price) || 0 : 0;
+      
       return {
-        id: data.id.toString(),
-        name: data.name,
-        description: data.description?.substring(0, 200) + '...' || 'No description available',
-        price: data.retail_price || 0,
-        images: data.image_url ? [{
-          url: data.image_url,
-          thumbnail_url: data.thumbnail_url
+        id: syncProduct.id.toString(),
+        name: syncProduct.name,
+        description: `Product with ${syncProduct.variants || 0} variants`,
+        price: price,
+        images: syncProduct.thumbnail_url ? [{
+          url: syncProduct.thumbnail_url,
+          thumbnail_url: syncProduct.thumbnail_url
         }] : [],
-        variants: data.variants || [],
-        retail_price: data.retail_price || 0
+        variants: syncVariants.map((variant: any) => ({
+          id: variant.id.toString(),
+          name: variant.name,
+          price: parseFloat(variant.retail_price) || 0
+        })),
+        retail_price: price
       }
     } catch (error) {
       console.error('Error fetching Printful product:', error)

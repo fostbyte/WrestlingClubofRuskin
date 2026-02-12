@@ -3,8 +3,8 @@ const fetch = require('node-fetch');
 exports.handler = async function(event, context) {
   const { path } = event;
   
-  // Only allow specific endpoints
-  if (!path.includes('/store/products')) {
+  // Allow specific endpoints for sync products
+  if (!path.includes('/sync/products')) {
     return {
       statusCode: 403,
       body: JSON.stringify({ error: 'Forbidden endpoint' })
