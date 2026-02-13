@@ -1,13 +1,152 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>wrestling-club-of-ruskin</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wrestling Club of Ruskin - The Little Horns</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Poppins:wght@400&display=swap" rel="stylesheet">
+    
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo-placeholder">
+                    <h1>LH<br>Wrestling</h1>
+                </div>
+                <nav class="nav">
+                    <ul class="nav-list">
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#info">Info</a></li>
+                        <li><a href="#gear">Gear</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                    <button class="hamburger" aria-label="Toggle menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title">Little Horns Wrestling Club</h1>
+                    <p class="hero-subtitle">Youth wrestling in Ruskin, FL</p>
+                    <p class="hero-description">Building champions. Season info coming soon</p>
+                    <a href="#info" class="cta-button">Get Info ↓</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about">
+            <div class="container">
+                <h2>About Us</h2>
+                <p class="about-text">
+                    Community-focused wrestling club dedicated to building character, discipline, and athletic excellence 
+                    in Ruskin's youth. We teach fundamental wrestling techniques while fostering teamwork and sportsmanship.
+                </p>
+            </div>
+        </section>
+
+        <!-- Info Section -->
+        <section id="info" class="info">
+            <div class="container">
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>Dates</h3>
+                        <p>Coming Soon</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>Coaches</h3>
+                        <p>Coming Soon</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>Location</h3>
+                        <p>Coming Soon</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>Cost</h3>
+                        <p>Coming Soon</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fundraiser Gear Section -->
+        <section id="gear" class="gear">
+            <div class="container">
+                <h2>Fundraiser Gear</h2>
+                <p class="gear-description">Support the club — all proceeds help us grow.</p>
+                
+                <!-- Swiper Carousel -->
+                <div class="swiper gear-swiper">
+                    <div class="swiper-wrapper">
+                        <!-- Products will be dynamically inserted here -->
+                    </div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-pagination"></div>
+                </div>
+                
+                <div class="loading-message">Loading products...</div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact">
+            <div class="container">
+                <h2>Get In Touch</h2>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <span class="contact-icon">📧</span>
+                        <a href="mailto:ruskin.lennard.wrestling@gmail.com">ruskin.lennard.wrestling@gmail.com</a>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">📞</span>
+                        <a href="tel:402-215-5111">402-215-5111</a>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">📱</span>
+                        <a href="https://instagram.com/lennardwrestlin" target="_blank" rel="noopener">@lennardwrestlin on Instagram</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Wrestling Club of Ruskin</p>
+            <a href="https://instagram.com/lennardwrestlin" target="_blank" rel="noopener" class="instagram-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1112.324 0 6.162 6.162 0 01-12.324 0zM12 16a4 4 0 110-8 4 4 0 010 8zm4.965-10.405a1.44 1.44 0 112.881.001 1.44 1.44 0 01-2.881-.001z"/>
+                </svg>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>
 </html>

@@ -1,3 +1,20 @@
 {
-	"siteId": "3da7fc8e-3dcc-4c3c-b3e5-db5c0a60ea39"
+	"geolocation": {
+		"data": {
+			"city": "Tampa",
+			"country": {
+				"code": "US",
+				"name": "United States"
+			},
+			"subdivision": {
+				"code": "FL",
+				"name": "Florida"
+			},
+			"timezone": "America/New_York",
+			"latitude": 27.935,
+			"longitude": -82.3772,
+			"postalCode": "33619"
+		},
+		"timestamp": 1770955421689
+	}
 }
