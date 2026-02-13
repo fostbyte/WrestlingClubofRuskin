@@ -1,7 +1,1 @@
-{
-  "name": "netlify-functions",
-  "version": "1.0.0",
-  "dependencies": {
-    "node-fetch": "^2.7.0"
-  }
-}
+{"name": "netlify-functions", "version": "1.0.0", "description": "Netlify functions for Wrestling Club of Ruskin website", "main": "printful-products.js", "dependencies": {"node-fetch": "^2.7.0"}}
