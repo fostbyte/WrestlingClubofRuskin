@@ -27,11 +27,20 @@ class PrintfulService {
     
     if (import.meta.env.DEV) {
       url = `${this.baseUrl}${endpoint}`
+      // Try VITE_PRINTFUL_TOKEN first, fallback to PRINTFUL_TOKEN
+      const token = import.meta.env.VITE_PRINTFUL_TOKEN || import.meta.env.PRINTFUL_TOKEN;
+      
+      if (!token) {
+        throw new Error('No Printful token found. Please set VITE_PRINTFUL_TOKEN in your .env file');
+      }
+      
       headers = {
-        'Authorization': `Bearer ${import.meta.env.PRINTFUL_TOKEN}`,
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         ...options.headers,
       }
+      
+      console.log('🔍 Development Mode - Using token:', token.substring(0, 10) + '...');
     } else {
       // Try different URL patterns for production
       const patterns = [
