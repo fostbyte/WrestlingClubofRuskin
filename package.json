@@ -1,0 +1,16 @@
+{
+  "name": "wrestling-club-of-ruskin",
+  "version": "1.0.0",
+  "description": "Wrestling Club of Ruskin - The Little Horns Website",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Static site - no build needed'",
+    "dev": "netlify dev"
+  },
+  "keywords": ["wrestling", "club", "ruskin", "little horns"],
+  "author": "Wrestling Club of Ruskin",
+  "license": "MIT",
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  }
+}
