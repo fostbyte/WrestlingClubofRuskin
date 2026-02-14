@@ -44,10 +44,11 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Handle customization form submission
+// Handle customization form submission with Shopify integration
 async function handleCustomization(button) {
     const productId = button.dataset.productId;
     const productName = button.dataset.productName;
+    const variantId = button.dataset.variantId;
     
     const nameInput = document.getElementById(`name-${productId}`);
     const weightSelect = document.getElementById(`weight-${productId}`);
@@ -68,36 +69,32 @@ async function handleCustomization(button) {
     
     // Show loading state
     button.disabled = true;
-    button.textContent = 'Processing...';
+    button.textContent = 'Creating checkout...';
     
     try {
-        // Call the customization API
-        const response = await fetch('/.netlify/functions/customize-product', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                productId: productId,
-                productName: productName,
-                name: name,
-                weightClass: weightClass
-            })
+        // Initialize Shopify API
+        const shopify = new ShopifyAPI();
+        
+        // Create checkout with customizations for Ninjaprint
+        const checkout = await shopify.createCheckout(variantId, {
+            name: name,
+            weightClass: weightClass
         });
         
-        const result = await response.json();
-        
-        if (response.ok) {
-            showMessage('Customization applied! Check your email for confirmation.', 'success');
+        if (checkout && checkout.webUrl) {
+            showMessage('Redirecting to checkout...', 'success');
+            // Redirect to Shopify checkout
+            window.open(checkout.webUrl, '_blank');
+            
             // Clear form
             nameInput.value = '';
             weightSelect.value = '';
         } else {
-            showMessage(result.error || 'Failed to apply customization', 'error');
+            showMessage('Failed to create checkout. Please try again.', 'error');
         }
     } catch (error) {
-        console.error('Customization error:', error);
-        showMessage('Error applying customization. Please try again.', 'error');
+        console.error('Checkout creation error:', error);
+        showMessage('Error creating checkout. Please try again.', 'error');
     } finally {
         // Reset button
         button.disabled = false;
@@ -139,17 +136,22 @@ function showMessage(message, type) {
     }, 3000);
 }
 
-// Gear Section with Printful Integration
+// Gear Section with Shopify Integration
 async function initializeGearSection() {
     const swiperWrapper = document.querySelector('.swiper-wrapper');
     const loadingMessage = document.querySelector('.loading-message');
     
     try {
-        // Fetch products from Printful API
-        const products = await fetchPrintfulProducts();
+        // Initialize Shopify API
+        const shopify = new ShopifyAPI();
+        
+        // Fetch products from Shopify
+        const products = await shopify.fetchProducts();
         
         if (products && products.length > 0) {
-            renderProducts(products, swiperWrapper);
+            // Format products for our display
+            const formattedProducts = products.map(product => shopify.formatProduct(product));
+            renderProducts(formattedProducts, swiperWrapper);
             initializeSwiper();
             loadingMessage.style.display = 'none';
         } else {
@@ -161,18 +163,18 @@ async function initializeGearSection() {
     }
 }
 
-async function fetchPrintfulProducts() {
+async function fetchShopifyProducts() {
     try {
-        const response = await fetch('/.netlify/functions/printful-products');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        const shopify = new ShopifyAPI();
+        const products = await shopify.fetchProducts();
+        
+        if (products) {
+            return products.map(product => shopify.formatProduct(product));
         }
-        const data = await response.json();
-        return data;
+        return null;
     } catch (error) {
-        console.error('Error fetching Printful products:', error);
-        // For development, show sample products
-        return getSampleProducts();
+        console.error('Error fetching Shopify products:', error);
+        return null;
     }
 }
 
@@ -191,10 +193,10 @@ function createProductSlide(product) {
     
     // Get the first variant's price and the main image
     const variant = product.variants && product.variants[0];
-    const price = variant ? `$${variant.retail_price}` : 'Price TBD';
+    const price = product.price || (variant ? `$${parseFloat(variant.price).toFixed(2)}` : 'Price TBD');
     const imageUrl = product.thumbnail_url || 'https://via.placeholder.com/300x200?text=Product+Image';
     const productName = product.name || 'Little Horns Gear';
-    const buyUrl = variant ? variant.checkout_url || '#' : '#';
+    const variantId = variant ? variant.id : null;
     
     slide.innerHTML = `
         <div class="product-card">
@@ -232,20 +234,50 @@ function createProductSlide(product) {
                                 <option value="285">285 lbs</option>
                             </select>
                         </div>
-                        <button class="customize-button" data-product-id="${product.id}" data-product-name="${productName}">
+                        <button class="customize-button" 
+                                data-product-id="${product.id}" 
+                                data-product-name="${productName}"
+                                data-variant-id="${variantId}">
                             Apply Customization →
                         </button>
                     </div>
                 </div>
                 
                 <div class="product-actions">
-                    <a href="${buyUrl}" target="_blank" rel="noopener" class="buy-button">
-                        Buy on Printful →
+                    <a href="#" class="buy-button shopify-buy-btn" data-variant-id="${variantId}">
+                        Buy on Shopify →
                     </a>
                 </div>
             </div>
         </div>
     `;
+    
+    // Add click handler for direct buy button
+    const buyBtn = slide.querySelector('.shopify-buy-btn');
+    if (buyBtn && variantId) {
+        buyBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            buyBtn.textContent = 'Creating checkout...';
+            buyBtn.disabled = true;
+            
+            try {
+                const shopify = new ShopifyAPI();
+                const checkout = await shopify.createCheckout(variantId, {});
+                
+                if (checkout && checkout.webUrl) {
+                    window.open(checkout.webUrl, '_blank');
+                } else {
+                    showMessage('Failed to create checkout', 'error');
+                }
+            } catch (error) {
+                console.error('Checkout error:', error);
+                showMessage('Error creating checkout', 'error');
+            } finally {
+                buyBtn.textContent = 'Buy on Shopify →';
+                buyBtn.disabled = false;
+            }
+        });
+    }
     
     return slide;
 }
@@ -287,7 +319,7 @@ function initializeSwiper() {
 
 function showNoProductsMessage() {
     const loadingMessage = document.querySelector('.loading-message');
-    loadingMessage.innerHTML = 'Products coming soon! Check back later for fundraiser gear.';
+    loadingMessage.innerHTML = 'Products coming soon! Check back later for fundraiser gear.<br><small>Make sure your Shopify store is configured with the correct credentials.</small>';
     loadingMessage.style.display = 'block';
     
     // Still initialize swiper with sample products for demo
@@ -301,32 +333,41 @@ function showNoProductsMessage() {
 function getSampleProducts() {
     return [
         {
+            id: 'sample1',
             name: 'Little Horns Hoodie',
             thumbnail_url: 'https://via.placeholder.com/300x200/4B0082/FFFFFF?text=Hoodie',
+            price: '$29.99',
             variants: [
                 {
-                    retail_price: '29.99',
-                    checkout_url: 'https://printful.com'
+                    id: 'gid://shopify/ProductVariant/1234567890',
+                    price: '29.99',
+                    available: true
                 }
             ]
         },
         {
+            id: 'sample2',
             name: 'Little Horns T-Shirt',
             thumbnail_url: 'https://via.placeholder.com/300x200/FFD700/000000?text=T-Shirt',
+            price: '$19.99',
             variants: [
                 {
-                    retail_price: '19.99',
-                    checkout_url: 'https://printful.com'
+                    id: 'gid://shopify/ProductVariant/1234567891',
+                    price: '19.99',
+                    available: true
                 }
             ]
         },
         {
+            id: 'sample3',
             name: 'Little Horns Hat',
             thumbnail_url: 'https://via.placeholder.com/300x200/000000/FFFFFF?text=Hat',
+            price: '$15.99',
             variants: [
                 {
-                    retail_price: '15.99',
-                    checkout_url: 'https://printful.com'
+                    id: 'gid://shopify/ProductVariant/1234567892',
+                    price: '15.99',
+                    available: true
                 }
             ]
         }
